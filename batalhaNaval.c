@@ -17,7 +17,7 @@ void addNavio(int navio[3], char orintacao, int linha, int coluna, int tabuleiro
         if (linha >= 0 && linha <= 7)
         {
             // Validando se na coluna o navio vai ficar fora do tabuleiro
-            if (linha >= 0 && coluna <= 9)
+            if (coluna >= 0 && coluna <= 9)
             {
                 // Alocando o Navio
                 for (int i = 0; i < 3; i++)
@@ -40,12 +40,39 @@ void addNavio(int navio[3], char orintacao, int linha, int coluna, int tabuleiro
         {
             printf("Sua coordenada de linha no eixo x deixa o navio fora do tabuleiro...\n");
         }
-        
-        
+    }
+    else if (orintacao == 'd'){
+        // Validando se na linha o navio vai ficar fora do tabuleiro
+        if (linha >= 0 && linha <= 7)
+        {
+            // Validando se na coluna o navio vai ficar fora do tabuleiro
+            if (coluna >= 0 && coluna <= 7)
+            {
+                // Alocando o Navio
+                for (int i = 0; i < 3; i++)
+                {
+                    // validando se existe um navio na casa atual
+                    if (tabuleiro[linha + i][coluna + i] == 0)
+                    {
+                        tabuleiro[linha + i][coluna + i] = navio[i];
+                    } else
+                    {
+                        printf("Nessa posição já tem um navio\n");
+                        break;
+                    }
+                    
+                }
+            } else {
+                printf("Sua coordenada de coluna no eixo d (diagonal) deixa o navio fora do tabuleiro...\n");
+            }
+        } else
+        {
+            printf("Sua coordenada de linha no eixo d (diagonal) deixa o navio fora do tabuleiro...\n");
+        }
     } else {
         if (linha >= 0 && linha <= 9)
         {
-            if (linha >= 0 && coluna <= 7)
+            if (coluna >= 0 && coluna <= 7)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -94,6 +121,9 @@ int main() {
 
     addNavio(navio, 'x', 0, 2, board); // Horizontal
     addNavio(navio, 'y', 4, 3, board); // Vertical
+
+    addNavio(navio, 'd', 1, 2, board);
+    addNavio(navio, 'd', 7, 1, board);
 
     // Exibindo o tabuleiro
     for (int square_l = 0; square_l < 10; square_l++)
