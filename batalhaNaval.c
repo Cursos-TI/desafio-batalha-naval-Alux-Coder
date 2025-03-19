@@ -1,14 +1,5 @@
 #include <stdio.h>
 
-// Desafio Batalha Naval - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
-// Siga os comentários para implementar cada parte do desafio.
-
-// Nível Novato - Posicionamento dos Navios
-// Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
-// Sugestão: Posicione dois navios no tabuleiro, um verticalmente e outro horizontalmente.
-// Sugestão: Utilize `printf` para exibir as coordenadas de cada parte dos navios.
-
 // Função que adiciona o navio
 void addNavio(int navio[3], char orintacao, int linha, int coluna, int tabuleiro[10][10]) {
     // Validando a orientação do navio
@@ -97,6 +88,104 @@ void addNavio(int navio[3], char orintacao, int linha, int coluna, int tabuleiro
     }
 }
 
+// Função que calcula a sobreposição das figuras a partir do seu centro
+void calcEffect(int area[5][5], int center[2], int tabuleiro[10][10]){
+    // Valor de centralização da figura
+    int origen[2] = {center[0] - 2, center[1] - 2};
+    // Laço externo para sobreposição
+    for (int square_l = 0; square_l < 5; square_l++)
+    {
+        // Laço interno para sobreposição
+        for (int square_c = 0; square_c < 5; square_c++)
+        {
+            // Switch de validação de sobreposição da figura em cada casa do tabuleiro
+            switch (tabuleiro[origen[0] + square_l][origen[1] + square_c])
+            {
+                // se 0 -> alocar o valor do pedaço da figura na casa do tabuleiro
+            case 0:
+                tabuleiro[origen[0] + square_l][origen[1] + square_c] = area[square_l][square_c];
+            break;
+
+                // Pula
+            case 1:
+                /* code */
+            break;
+
+                // se 3 -> fazer uma validação:
+            case 3:
+                // se o pedaço da figura for 0, soma 0
+                if (area[square_l][square_c] == 0){
+                    tabuleiro[origen[0] + square_l][origen[1] + square_c] += 0;
+                // Se for 1, soma 2 para virar 5 e mostrar que o navio foi afetado.
+                } else if (area[square_l][square_c] == 1)
+                {
+                    tabuleiro[origen[0] + square_l][origen[1] + square_c] += 2;
+                }
+                
+            break;
+            
+            default:
+                break;
+            }
+        }
+        
+    }
+    
+}
+
+// Função que adiciona o efeito de are especifico.
+void addAreaEffect(int effect, int center[2], int tabuleiro[10][10]) {
+    // Validação com base nas coordenadas se a figura vai ficar dentro do tabuleiro.
+    if ( (1 < center[0] && center[0] < 7) && (1 < center[1] && center[1] < 7)){
+        switch (effect)
+        {
+        case 1:
+        {
+            int area_cruz[5][5] = {
+                {0, 0, 1, 0, 0},
+                {0, 0, 1, 0, 0},
+                {1, 1, 1, 1, 1},
+                {0, 0, 1, 0, 0},
+                {0, 0, 1, 0, 0},
+            };
+            calcEffect(area_cruz, center, tabuleiro);
+        }
+        break;
+        
+        case 2:
+        {
+            int area_octaedro[5][5] = {
+                {0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0},
+                {0, 1, 1, 1, 0},
+                {0, 0, 1, 0, 0},
+                {0, 0, 0, 0, 0},
+            };
+            calcEffect(area_octaedro, center, tabuleiro);
+        }
+        break;
+
+        case 3:
+        {
+            int area_cone[5][5] = {
+                {0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0},
+                {0, 1, 1, 1, 0},
+                {1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0},
+            };
+            calcEffect(area_cone, center, tabuleiro);
+        }
+        break;
+
+        default:
+        break;
+        }
+    } else {
+        printf("O efeito em area, está fora do tabuleiro...\n");
+    }
+}
+
 int main() {
     printf("TABULEIRO DE BATALHA NAVAL\n");
 
@@ -122,8 +211,25 @@ int main() {
     addNavio(navio, 'x', 0, 2, board); // Horizontal
     addNavio(navio, 'y', 4, 3, board); // Vertical
 
-    addNavio(navio, 'd', 1, 2, board);
-    addNavio(navio, 'd', 7, 1, board);
+    addNavio(navio, 'd', 1, 2, board); // Diagonal
+    addNavio(navio, 'd', 7, 1, board); // Diagonal
+
+    int coordenadas[2];
+
+    // Primeira chamada de criação de figura
+    coordenadas[0] = 2;
+    coordenadas[1] = 6;
+    addAreaEffect(1, coordenadas, board);
+
+    // Segunda chamada de criação de figura
+    coordenadas[0] = 2;
+    coordenadas[1] = 2;
+    addAreaEffect(2, coordenadas, board);
+
+    // Terceira chamada de criação de figura
+    coordenadas[0] = 6;
+    coordenadas[1] = 6;
+    addAreaEffect(3, coordenadas, board);
 
     // Exibindo o tabuleiro
     for (int square_l = 0; square_l < 10; square_l++)
@@ -137,29 +243,3 @@ int main() {
 
     return 0;
 }
-
-// Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
-// Sugestão: Expanda o tabuleiro para uma matriz 10x10.
-// Sugestão: Posicione quatro navios no tabuleiro, incluindo dois na diagonal.
-// Sugestão: Exiba o tabuleiro completo no console, mostrando 0 para posições vazias e 3 para posições ocupadas.
-
-// Nível Mestre - Habilidades Especiais com Matrizes
-// Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-// Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-// Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
-
-// Exemplos de exibição das habilidades:
-// Exemplo para habilidade em cone:
-// 0 0 1 0 0
-// 0 1 1 1 0
-// 1 1 1 1 1
-
-// Exemplo para habilidade em octaedro:
-// 0 0 1 0 0
-// 0 1 1 1 0
-// 0 0 1 0 0
-
-// Exemplo para habilidade em cruz:
-// 0 0 1 0 0
-// 1 1 1 1 1
-// 0 0 1 0 0
